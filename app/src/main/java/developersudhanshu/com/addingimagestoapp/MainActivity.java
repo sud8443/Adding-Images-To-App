@@ -108,6 +108,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if(dialog.isShowing()){
                     dialog.cancel();
                 }
+                // Note: To pick up the image from the gallery we need the
+                // EXTERNAL_STORAGE permission else it will not be able fetch the image.
+                // Also check that the permission is granted at runtime or not.
                 Intent galleryImagePickIntent = new Intent();
                 galleryImagePickIntent.setType("image/*");
                 galleryImagePickIntent.setAction(Intent.ACTION_PICK);
@@ -141,6 +144,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             userPic.setImageBitmap(scaledBitmap);
         }
         if (requestCode == TAKE_PICTURE_CODE && resultCode == RESULT_OK){
+            // Note: data.getData() will always be null as ACTION_IMAGE_CAPTURE
+            // does not return a Uri. So to fetch the image we will use the Uri
+            // which we already passed in as EXTRA_OUTPUT.
+            // Note: If EXTRA_OUTPUT is not present then a small sized image is returned
+            // as a Bitmap object in the extra field.
+            // Refer the following links: https://developer.android.com/reference/android/provider/MediaStore#ACTION_IMAGE_CAPTURE
+            // https://stackoverflow.com/questions/34119483/android-camera-photo-comes-back-null
 //            if(data != null) {
 //                String path = getAbsolutePath(data.getData());
                 Bitmap scaledBitmap = Bitmap.createScaledBitmap(BitmapFactory.decodeFile(mCurrentPhotoPath),
